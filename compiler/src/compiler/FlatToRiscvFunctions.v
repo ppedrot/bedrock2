@@ -97,7 +97,7 @@ Section Proofs.
       valid_FlatImp_vars s ->
       Forall valid_FlatImp_var (modVars_as_list Z.eqb s).
   Proof.
-    induction s; intros; simpl in *; simp; eauto 10 using @union_Forall.
+    induction s; intros; simpl in *; simp; pose proof @union_Forall; eauto 10.
   Qed.
 
   Set Printing Depth 100000.
@@ -200,7 +200,7 @@ Section Proofs.
                         change Z with Register in *; *)
                      map_solver (@locals_ok p h)]
     | |- _ => solve [solve_valid_machine (@word_ok (@W (@def_params p)))]
-    | |- _ => solve [eauto 3 using regs_initialized_put, preserve_valid_FlatImp_var_domain_put]
+    | |- _ => solve [epose proof regs_initialized_put; epose proof preserve_valid_FlatImp_var_domain_put; eauto 3]
     | H: subset (footpr _) _ |- subset (footpr _) _ =>
       eapply rearrange_footpr_subset; [ exact H | solve [wwcancel] ]
     | |- _ => idtac
@@ -1377,7 +1377,7 @@ Section Proofs.
         }
         assert (In x (list_union Z.eqb (modVars_as_list Z.eqb body) argnames)) as I2. {
           eapply In_list_union_spec.
-          eauto using nth_error_In.
+          pose proof nth_error_In; eauto.
         }
         apply In_nth_error in I2. destruct I2 as [i I2].
         pose proof (map.putmany_of_list_zip_empty_find_value _ _ _ _ _ P' I2) as C.

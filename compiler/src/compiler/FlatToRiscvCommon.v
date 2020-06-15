@@ -723,7 +723,7 @@ Section FlatToRiscv1.
       map.same_domain m m'.
   Proof.
     intros. unfold store_bytes, load_bytes, unchecked_store_bytes in *. simp.
-    eauto using map.putmany_of_tuple_preserves_domain.
+    pose proof map.putmany_of_tuple_preserves_domain; eauto.
   Qed.
 
   Lemma seplog_subst_eq{A B R: mem -> Prop} {mL mH: mem}

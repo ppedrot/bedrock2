@@ -25,9 +25,9 @@ Section SepProperties.
 
   (* sep and sep *)
   Lemma sep_comm p q : iff1 (p*q) (q*p).
-  Proof. cbv [iff1 sep split]; t; eauto 10 using putmany_comm, (fun m1 m2 => proj2 (disjoint_comm m1 m2)). Qed.
+  Proof. cbv [iff1 sep split]; t; pose proof (fun m1 m2 => proj2 (disjoint_comm m1 m2)); eauto 10 using putmany_comm. Qed.
   Lemma sep_assoc p q r : iff1 ((p*q)*r) (p*(q*r)).
-  Proof. cbv [iff1 sep split]; t; eauto 15 using eq_sym, putmany_assoc, ((fun m1 m2 m3 => proj2 (disjoint_putmany_l m1 m2 m3))), ((fun m1 m2 m3 => proj2 (disjoint_putmany_r m1 m2 m3))). Qed.
+  Proof. cbv [iff1 sep split]; t; pose proof ((fun m1 m2 m3 => proj2 (disjoint_putmany_l m1 m2 m3))); pose proof ((fun m1 m2 m3 => proj2 (disjoint_putmany_r m1 m2 m3))); eauto 15 using eq_sym, putmany_assoc. Qed.
 
   Lemma get_ptsto k v m (H : ptsto k v m) : get m k = Some v.
   Proof. rewrite H, get_put_same; trivial. Qed.
@@ -95,7 +95,7 @@ Section SepProperties.
 
   (* sep and emp *)
   Lemma sep_emp_emp p q : iff1 (sep (emp p) (emp q)) (emp (p /\ q)).
-  Proof. cbv [iff1 sep emp split]; t; intuition eauto 20 using putmany_empty_l, disjoint_empty_l. Qed.
+  Proof. cbv [iff1 sep emp split]; t; pose proof putmany_empty_l; intuition eauto 20 using disjoint_empty_l. Qed.
   Lemma sep_comm_emp_r a b : iff1 (a * emp b) (emp b * a). eapply sep_comm. Qed.
   Lemma sep_emp_2 a b c : iff1 (a * (emp b * c)) (emp b * (a * c)).
   Proof. rewrite <-sep_assoc. rewrite (sep_comm a). rewrite sep_assoc. reflexivity. Qed.
@@ -128,9 +128,9 @@ Section SepProperties.
 
   (* impl1 and emp *)
   Lemma impl1_l_sep_emp (a:Prop) b c : impl1 (emp a * b) c <-> (a -> impl1 b c).
-  Proof. cbv [impl1 emp sep split]; t; rewrite ?putmany_empty_l; eauto 10 using putmany_empty_l, disjoint_empty_l. Qed.
+  Proof. cbv [impl1 emp sep split]; t; rewrite ?putmany_empty_l; pose proof putmany_empty_l; eauto 10 using disjoint_empty_l. Qed.
   Lemma impl1_r_sep_emp a b c : (b /\ impl1 a c) -> impl1 a (emp b * c).
-  Proof. cbv [impl1 emp sep split]; t; eauto 10 using putmany_empty_l, disjoint_empty_l. Qed.
+  Proof. cbv [impl1 emp sep split]; t; pose proof putmany_empty_l; eauto 10 using disjoint_empty_l. Qed.
 
 (** shallow reflection from a list of predicates for faster cancellation proofs *)
   Fixpoint seps' (xs : list (rep -> Prop)) : rep -> Prop :=
